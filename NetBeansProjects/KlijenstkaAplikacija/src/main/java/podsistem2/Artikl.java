@@ -50,7 +50,7 @@ public class Artikl implements Serializable {
     @Column(name = "popust")
     private double popust;
     @Basic(optional = false)
-    @JoinColumn(name = "id_kreator", referencedColumnName = "id_korisnik")
+    @Column(name = "id_kreator")
     private int idKreator;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "artikl")
     private List<WishlistArtikl> wishlistArtiklList;
