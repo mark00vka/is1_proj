@@ -5,7 +5,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +21,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -28,8 +30,16 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "korisnik")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Korisnik.findAll", query = "SELECT k FROM Korisnik k")})
+    @NamedQuery(name = "Korisnik.findAll", query = "SELECT k FROM Korisnik k"),
+    @NamedQuery(name = "Korisnik.findByIdKorisnik", query = "SELECT k FROM Korisnik k WHERE k.idKorisnik = :idKorisnik"),
+    @NamedQuery(name = "Korisnik.findByKorisnickoIme", query = "SELECT k FROM Korisnik k WHERE k.korisnickoIme = :korisnickoIme"),
+    @NamedQuery(name = "Korisnik.findBySifra", query = "SELECT k FROM Korisnik k WHERE k.sifra = :sifra"),
+    @NamedQuery(name = "Korisnik.findByIme", query = "SELECT k FROM Korisnik k WHERE k.ime = :ime"),
+    @NamedQuery(name = "Korisnik.findByPrezime", query = "SELECT k FROM Korisnik k WHERE k.prezime = :prezime"),
+    @NamedQuery(name = "Korisnik.findByAdresa", query = "SELECT k FROM Korisnik k WHERE k.adresa = :adresa"),
+    @NamedQuery(name = "Korisnik.findByStanjeNovca", query = "SELECT k FROM Korisnik k WHERE k.stanjeNovca = :stanjeNovca")})
 public class Korisnik implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -69,7 +79,7 @@ public class Korisnik implements Serializable {
         @JoinColumn(name = "id_korisnik", referencedColumnName = "id_korisnik")}, inverseJoinColumns = {
         @JoinColumn(name = "id_uloga", referencedColumnName = "id_uloga")})
     @ManyToMany
-    private Collection<Uloga> ulogaCollection;
+    private List<Uloga> ulogaList;
     @JoinColumn(name = "id_grad", referencedColumnName = "id_grad")
     @ManyToOne
     private Grad idGrad;
@@ -146,19 +156,20 @@ public class Korisnik implements Serializable {
         this.stanjeNovca = stanjeNovca;
     }
 
-    public Collection<Uloga> getUlogaCollection() {
-        return ulogaCollection;
+    @XmlTransient
+    public List<Uloga> getUlogaList() {
+        return ulogaList;
     }
 
-    public void setUlogaCollection(Collection<Uloga> ulogaCollection) {
-        this.ulogaCollection = ulogaCollection;
+    public void setUlogaList(List<Uloga> ulogaList) {
+        this.ulogaList = ulogaList;
     }
 
-    public Grad getIdGrad() {
+    public Grad getGrad() {
         return idGrad;
     }
 
-    public void setIdGrad(Grad idGrad) {
+    public void setGrad(Grad idGrad) {
         this.idGrad = idGrad;
     }
 

@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence           http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
-  <persistence-unit name="Podsistem1PU" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="Podsistem2PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>entities.Grad</class>
-    <class>entities.Korisnik</class>
-    <class>entities.Uloga</class>
+    <class>entities.Korpa</class>
+    <class>entities.Wishlist</class>
+    <class>entities.Kategorija</class>
+    <class>entities.KorpaArtikl</class>
+    <class>entities.WishlistArtikl</class>
+    <class>entities.Artikl</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/podsistem1?useSSL=false"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/podsistem2?useSSL=false"/>
       <property name="javax.persistence.jdbc.user" value="root"/>
-      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="admin"/>
     </properties>
   </persistence-unit>

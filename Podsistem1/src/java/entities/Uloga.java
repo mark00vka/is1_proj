@@ -5,7 +5,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +19,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -26,8 +28,11 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "uloga")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Uloga.findAll", query = "SELECT u FROM Uloga u")})
+    @NamedQuery(name = "Uloga.findAll", query = "SELECT u FROM Uloga u"),
+    @NamedQuery(name = "Uloga.findByIdUloga", query = "SELECT u FROM Uloga u WHERE u.idUloga = :idUloga"),
+    @NamedQuery(name = "Uloga.findByNaziv", query = "SELECT u FROM Uloga u WHERE u.naziv = :naziv")})
 public class Uloga implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,8 +50,8 @@ public class Uloga implements Serializable {
     @Size(max = 65535)
     @Column(name = "opis")
     private String opis;
-    @ManyToMany(mappedBy = "ulogaCollection")
-    private Collection<Korisnik> korisnikCollection;
+    @ManyToMany(mappedBy = "ulogaList")
+    private List<Korisnik> korisnikList;
 
     public Uloga() {
     }
@@ -84,12 +89,13 @@ public class Uloga implements Serializable {
         this.opis = opis;
     }
 
-    public Collection<Korisnik> getKorisnikCollection() {
-        return korisnikCollection;
+    @XmlTransient
+    public List<Korisnik> getKorisnikList() {
+        return korisnikList;
     }
 
-    public void setKorisnikCollection(Collection<Korisnik> korisnikCollection) {
-        this.korisnikCollection = korisnikCollection;
+    public void setKorisnikList(List<Korisnik> korisnikList) {
+        this.korisnikList = korisnikList;
     }
 
     @Override

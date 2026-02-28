@@ -5,7 +5,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -25,8 +27,11 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "grad")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Grad.findAll", query = "SELECT g FROM Grad g")})
+    @NamedQuery(name = "Grad.findAll", query = "SELECT g FROM Grad g"),
+    @NamedQuery(name = "Grad.findByIdGrad", query = "SELECT g FROM Grad g WHERE g.idGrad = :idGrad"),
+    @NamedQuery(name = "Grad.findByNaziv", query = "SELECT g FROM Grad g WHERE g.naziv = :naziv")})
 public class Grad implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,7 +46,7 @@ public class Grad implements Serializable {
     @Column(name = "naziv")
     private String naziv;
     @OneToMany(mappedBy = "idGrad")
-    private Collection<Korisnik> korisnikCollection;
+    private List<Korisnik> korisnikList;
 
     public Grad() {
     }
@@ -71,12 +76,13 @@ public class Grad implements Serializable {
         this.naziv = naziv;
     }
 
-    public Collection<Korisnik> getKorisnikCollection() {
-        return korisnikCollection;
+    @XmlTransient
+    public List<Korisnik> getKorisnikList() {
+        return korisnikList;
     }
 
-    public void setKorisnikCollection(Collection<Korisnik> korisnikCollection) {
-        this.korisnikCollection = korisnikCollection;
+    public void setKorisnikList(List<Korisnik> korisnikList) {
+        this.korisnikList = korisnikList;
     }
 
     @Override
