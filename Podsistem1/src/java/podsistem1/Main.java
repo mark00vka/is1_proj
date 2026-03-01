@@ -10,8 +10,6 @@ import podsistem1.jms.Podsistem1Listener;
 public class Main {
 
     public static void main(String[] args) {
-
-        // Test DB connection first
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Map<String, String> props = new HashMap<>();

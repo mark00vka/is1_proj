@@ -26,8 +26,7 @@ import org.xml.sax.InputSource;
 
 public class Podsistem1Service {
 
-    private static final String DB_URL  = "jdbc:mysql://localhost:3306/podsistem2?useSSL=false";
-    private static final String DB1_URL = "jdbc:mysql://localhost:3306/podsistem1?useSSL=false";
+    private static final String DB_URL  = "jdbc:mysql://localhost:3306/podsistem1?useSSL=false";
     private static final String DB_USER = "root";
     private static final String DB_PASS = "admin";
 
@@ -42,7 +41,7 @@ public class Podsistem1Service {
         props.put("javax.persistence.jdbc.url",    DB_URL);
         props.put("javax.persistence.jdbc.user",   DB_USER);
         props.put("javax.persistence.jdbc.password", DB_PASS);
-        this.emf = Persistence.createEntityManagerFactory("Podsistem2PU", props);
+        this.emf = Persistence.createEntityManagerFactory("Podsistem1PU", props);
     }
 
     // ----------------------------------------------------------------
