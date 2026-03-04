@@ -117,17 +117,18 @@ public class Podsistem3Service {
 
     // Clear cart in podsistem2 after payment
     private void ocistiKorpu(int idKorisnik) {
-        try (Connection conn = DriverManager.getConnection(DB2_URL, DB_USER, DB_PASS);
-             PreparedStatement ps1 = conn.prepareStatement(
-                 "DELETE ka FROM korpa_artikl ka " +
-                 "JOIN korpa k ON ka.id_korpa = k.id_korpa " +
-                 "WHERE k.id_korisnik = ?");
-             PreparedStatement ps2 = conn.prepareStatement(
-                 "UPDATE korpa SET ukupna_cena = 0 WHERE id_korisnik = ?")) {
-            ps1.setInt(1, idKorisnik);
-            ps1.executeUpdate();
-            ps2.setInt(1, idKorisnik);
-            ps2.executeUpdate();
+        try (Connection conn = DriverManager.getConnection(DB2_URL, DB_USER, DB_PASS)) {
+            try (PreparedStatement ps1 = conn.prepareStatement(
+                     "DELETE FROM korpa_artikl WHERE id_korpa IN " +
+                     "(SELECT id_korpa FROM korpa WHERE id_korisnik = ?)")) {
+                ps1.setInt(1, idKorisnik);
+                ps1.executeUpdate();
+            }
+            try (PreparedStatement ps2 = conn.prepareStatement(
+                     "UPDATE korpa SET ukupna_cena = 0 WHERE id_korisnik = ?")) {
+                ps2.setInt(1, idKorisnik);
+                ps2.executeUpdate();
+            }
         } catch (Exception e) {
             System.err.println("Error clearing korpa: " + e.getMessage());
         }

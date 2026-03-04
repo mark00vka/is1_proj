@@ -281,6 +281,8 @@ public class Podsistem2Service {
             } else {
                 KorpaArtiklPK pk = new KorpaArtiklPK(korpa.getIdKorpa(), idArtikl);
                 KorpaArtikl ka = new KorpaArtikl(pk, kolicina);
+                ka.setArtikl(a);
+                ka.setKorpa(korpa);
                 em.persist(ka);
             }
 
@@ -312,19 +314,27 @@ public class Podsistem2Service {
             int idArtikl   = Integer.parseInt(getText(doc, "id_artikl"));
             int kolicina   = Integer.parseInt(getText(doc, "kolicina"));
 
+            // Find korpa by user
+            TypedQuery<Korpa> qk = em.createQuery(
+                "SELECT k FROM Korpa k WHERE k.idKorisnik = :id", Korpa.class);
+            qk.setParameter("id", idKorisnik);
+            List<Korpa> korpe = qk.getResultList();
+            if (korpe.isEmpty()) return error("Korpa ne postoji");
+            Korpa korpa = korpe.get(0);
+
+            // Find artikl in korpa using PK fields
             TypedQuery<KorpaArtikl> q = em.createQuery(
                 "SELECT ka FROM KorpaArtikl ka WHERE " +
-                "ka.korpa.idKorisnik = :idK AND " +
-                "ka.artikl.idArtikl = :idA", KorpaArtikl.class);
-            q.setParameter("idK", idKorisnik);
+                "ka.korpaArtiklPK.idKorpa = :idK AND ka.korpaArtiklPK.idArtikl = :idA",
+                KorpaArtikl.class);
+            q.setParameter("idK", korpa.getIdKorpa());
             q.setParameter("idA", idArtikl);
             List<KorpaArtikl> results = q.getResultList();
 
             if (results.isEmpty()) return error("Artikl nije u korpi");
 
             KorpaArtikl ka = results.get(0);
-            Korpa korpa    = ka.getKorpa();
-            Artikl a       = ka.getArtikl();
+            Artikl a       = em.find(Artikl.class, idArtikl);
             int stvarnaKolicina = Math.min(kolicina, ka.getKolicina());
 
             em.getTransaction().begin();
@@ -394,6 +404,8 @@ public class Podsistem2Service {
             if (existingWa.isEmpty()) {
                 WishlistArtiklPK waPK = new WishlistArtiklPK(wishlist.getIdWishlist(), idArtikl);
                 WishlistArtikl wa = new WishlistArtikl(waPK, new Date());
+                wa.setArtikl(a);
+                wa.setWishlist(wishlist);
                 em.persist(wa);
             }
             em.getTransaction().commit();
@@ -418,11 +430,19 @@ public class Podsistem2Service {
             int idKorisnik = Integer.parseInt(getText(doc, "id_korisnik"));
             int idArtikl   = Integer.parseInt(getText(doc, "id_artikl"));
 
+            // Find wishlist by user
+            TypedQuery<Wishlist> qw = em.createQuery(
+                "SELECT w FROM Wishlist w WHERE w.idKorisnik = :id", Wishlist.class);
+            qw.setParameter("id", idKorisnik);
+            List<Wishlist> wishlists = qw.getResultList();
+            if (wishlists.isEmpty()) return error("Wishlist ne postoji");
+
+            // Find artikl in wishlist using PK fields
             TypedQuery<WishlistArtikl> q = em.createQuery(
                 "SELECT wa FROM WishlistArtikl wa WHERE " +
-                "wa.wishlist.idKorisnik = :idK AND " +
-                "wa.artikl.idArtikl = :idA", WishlistArtikl.class);
-            q.setParameter("idK", idKorisnik);
+                "wa.wishlistArtiklPK.idWishlist = :idW AND wa.wishlistArtiklPK.idArtikl = :idA",
+                WishlistArtikl.class);
+            q.setParameter("idW", wishlists.get(0).getIdWishlist());
             q.setParameter("idA", idArtikl);
             List<WishlistArtikl> results = q.getResultList();
 
