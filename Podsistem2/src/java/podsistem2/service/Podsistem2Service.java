@@ -269,7 +269,7 @@ public class Podsistem2Service {
             // Check if already in cart
             TypedQuery<KorpaArtikl> qa = em.createQuery(
                 "SELECT ka FROM KorpaArtikl ka WHERE " +
-                "ka.korpa.idKorpa = :idK AND ka.artikl.idArtikl = :idA",
+                "ka.korpaArtiklPK.idKorpa = :idK AND ka.korpaArtiklPK.idArtikl = :idA",
                 KorpaArtikl.class);
             qa.setParameter("idK", korpa.getIdKorpa());
             qa.setParameter("idA", idArtikl);
@@ -279,10 +279,8 @@ public class Podsistem2Service {
                 existing.get(0).setKolicina(
                     existing.get(0).getKolicina() + kolicina);
             } else {
-                KorpaArtikl ka = new KorpaArtikl();
-                ka.setKorpa(korpa);
-                ka.setArtikl(a);
-                ka.setKolicina(kolicina);
+                KorpaArtiklPK pk = new KorpaArtiklPK(korpa.getIdKorpa(), idArtikl);
+                KorpaArtikl ka = new KorpaArtikl(pk, kolicina);
                 em.persist(ka);
             }
 
@@ -331,6 +329,7 @@ public class Podsistem2Service {
 
             em.getTransaction().begin();
             if (ka.getKolicina() <= kolicina) {
+                korpa.getKorpaArtiklList().remove(ka);
                 em.remove(ka);
             } else {
                 ka.setKolicina(ka.getKolicina() - kolicina);
@@ -384,11 +383,19 @@ public class Podsistem2Service {
                 wishlist = wishlists.get(0);
             }
 
-            WishlistArtikl wa = new WishlistArtikl();
-            wa.setWishlist(wishlist);
-            wa.setArtikl(a);
-            wa.setDatumDodavanja(new Date());
-            em.persist(wa);
+            TypedQuery<WishlistArtikl> qwa = em.createQuery(
+                "SELECT wa FROM WishlistArtikl wa WHERE " +
+                "wa.wishlistArtiklPK.idWishlist = :idW AND wa.wishlistArtiklPK.idArtikl = :idA",
+                WishlistArtikl.class);
+            qwa.setParameter("idW", wishlist.getIdWishlist());
+            qwa.setParameter("idA", idArtikl);
+            List<WishlistArtikl> existingWa = qwa.getResultList();
+
+            if (existingWa.isEmpty()) {
+                WishlistArtiklPK waPK = new WishlistArtiklPK(wishlist.getIdWishlist(), idArtikl);
+                WishlistArtikl wa = new WishlistArtikl(waPK, new Date());
+                em.persist(wa);
+            }
             em.getTransaction().commit();
 
             Document resp = newDoc();
@@ -503,16 +510,16 @@ public class Podsistem2Service {
 
             EntityManager em = emf.createEntityManager();
             TypedQuery<Korpa> q = em.createQuery(
-                "SELECT k FROM Korpa k WHERE k.idKorisnik = :id", Korpa.class);
+                "SELECT k FROM Korpa k LEFT JOIN FETCH k.korpaArtiklList ka LEFT JOIN FETCH ka.artikl WHERE k.idKorisnik = :id", Korpa.class);
             q.setParameter("id", idKorisnik);
             List<Korpa> korpe = q.getResultList();
-            em.close();
 
             Document resp = newDoc();
             Element root  = resp.createElement("korpa");
             resp.appendChild(root);
 
             if (korpe.isEmpty()) {
+                em.close();
                 addEl(resp, root, "poruka", "Korpa je prazna");
                 return toXml(resp);
             }
@@ -529,9 +536,11 @@ public class Podsistem2Service {
                       String.valueOf(ka.getArtikl().getIdArtikl()));
                 addEl(resp, el, "naziv",    ka.getArtikl().getNaziv());
                 addEl(resp, el, "cena",     String.valueOf(ka.getArtikl().getCena()));
+                addEl(resp, el, "popust",   String.valueOf(ka.getArtikl().getPopust()));
                 addEl(resp, el, "kolicina", String.valueOf(ka.getKolicina()));
                 artikli.appendChild(el);
             }
+            em.close();
             return toXml(resp);
         } catch (Exception e) {
             return error("Greska: " + e.getMessage());
@@ -550,13 +559,13 @@ public class Podsistem2Service {
                 Wishlist.class);
             q.setParameter("id", idKorisnik);
             List<Wishlist> wishlists = q.getResultList();
-            em.close();
 
             Document resp = newDoc();
             Element root  = resp.createElement("wishlist");
             resp.appendChild(root);
 
             if (wishlists.isEmpty()) {
+                em.close();
                 addEl(resp, root, "poruka", "Wishlist je prazan");
                 return toXml(resp);
             }
@@ -576,6 +585,7 @@ public class Podsistem2Service {
                       wa.getDatumDodavanja().toString());
                 artikli.appendChild(el);
             }
+            em.close();
             return toXml(resp);
         } catch (Exception e) {
             return error("Greska: " + e.getMessage());

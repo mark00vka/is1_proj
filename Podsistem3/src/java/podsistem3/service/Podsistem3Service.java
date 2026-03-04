@@ -287,8 +287,9 @@ public class Podsistem3Service {
                 Narudzbina.class);
             q.setParameter("id", idKorisnik);
             List<Narudzbina> narudzbine = q.getResultList();
+            String result = buildNarudzbineXml(narudzbine);
             em.close();
-            return buildNarudzbineXml(narudzbine);
+            return result;
         } catch (Exception e) {
             return error("Greska: " + e.getMessage());
         }
@@ -302,8 +303,9 @@ public class Podsistem3Service {
             EntityManager em = emf.createEntityManager();
             List<Narudzbina> narudzbine = em.createQuery(
                 "SELECT n FROM Narudzbina n", Narudzbina.class).getResultList();
+            String result = buildNarudzbineXml(narudzbine);
             em.close();
-            return buildNarudzbineXml(narudzbine);
+            return result;
         } catch (Exception e) {
             return error("Greska: " + e.getMessage());
         }

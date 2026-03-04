@@ -35,7 +35,7 @@ public class Podsistem1Listener implements Runnable {
             consumer = session.createConsumer(requestQueue);
             connection.start();
 
-            System.out.println("Podsistem1: JMS Listener started, waiting for messages...");
+            System.out.println("Podsistem1: JMS Listener je pokrenut i ceka poruke...");
 
             consumer.setMessageListener(message -> {
                 try {

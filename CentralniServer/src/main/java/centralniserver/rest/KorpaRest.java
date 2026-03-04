@@ -29,9 +29,10 @@ public class KorpaRest {
         return Response.ok(jms.sendToPodsistem2(xml, "DODAJ_U_KORPU")).build();
     }
 
-    // DELETE /api/korpa
+    // POST /api/korpa/obrisi
     // Body: <request><id_artikl>1</id_artikl><kolicina>1</kolicina></request>
-    @DELETE
+    @POST
+    @Path("/obrisi")
     public Response obrisiIzKorpe(@HeaderParam("X-Korisnik-Id") String id,
                                    String body) {
         String xml = body.replace("<request>",
@@ -57,9 +58,9 @@ public class KorpaRest {
         return Response.ok(jms.sendToPodsistem2(xml, "DODAJ_U_WISHLIST")).build();
     }
 
-    // DELETE /api/korpa/wishlist
-    @DELETE
-    @Path("/wishlist")
+    // POST /api/korpa/wishlist/obrisi
+    @POST
+    @Path("/wishlist/obrisi")
     public Response obrisiIzWishlist(@HeaderParam("X-Korisnik-Id") String id,
                                       String body) {
         String xml = body.replace("<request>",

@@ -375,7 +375,7 @@ public class KlijentskaAplikacija {
             "<id_artikl>" + idArtikl + "</id_artikl>" +
             "<kolicina>"  + kolicina + "</kolicina>" +
             "</request>";
-        XMLTabela.ispisi(sendRequest("DELETE", "/korpa", xml, token));
+        XMLTabela.ispisi(sendRequest("POST", "/korpa/obrisi", xml, token));
     }
 
     // ================================================================
@@ -383,7 +383,7 @@ public class KlijentskaAplikacija {
     // ================================================================
 
     private static void pregledWishlist() {
-        XMLTabela.ispisi(sendRequest("GET", "/korpa/wishlist", null, token));
+        XMLTabela.ispisWishlist(sendRequest("GET", "/korpa/wishlist", null, token));
     }
 
     private static void dodajUWishlist() {
@@ -404,7 +404,7 @@ public class KlijentskaAplikacija {
         String xml = "<request>" +
             "<id_artikl>" + idArtikl + "</id_artikl></request>";
         XMLTabela.ispisi(
-            sendRequest("DELETE", "/korpa/wishlist", xml, token));
+            sendRequest("POST", "/korpa/wishlist/obrisi", xml, token));
     }
 
     // ================================================================
@@ -509,8 +509,12 @@ public class KlijentskaAplikacija {
                 reader = new BufferedReader(
                     new InputStreamReader(conn.getInputStream(), "UTF-8"));
             } else {
+                try {
                 reader = new BufferedReader(
                     new InputStreamReader(conn.getErrorStream(), "UTF-8"));
+                } catch (Exception e) {
+                    return "<greska>" + "Status code: " + String.valueOf(status) + "</greska>";
+                }
             }
 
             StringBuilder sb = new StringBuilder();

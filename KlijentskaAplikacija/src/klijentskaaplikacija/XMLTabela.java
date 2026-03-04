@@ -117,25 +117,61 @@ public class XMLTabela {
         System.out.println("\n=== KORPA ===");
         String[] stavke = xml.split("<stavka>");
         String[] polja  = {"naziv", "cena", "kolicina"};
-        int[]    sirine = {30, 12, 10};
+        int[]    sirine = {30, 6, 12, 10, 10};
 
         ispisSeparator(sirine);
-        ispisRed(new String[]{"NAZIV", "CENA (RSD)", "KOLICINA"}, sirine, true);
+        ispisRed(new String[]{"NAZIV", "ID", "CENA (RSD)", "Popust (%)", "KOLICINA"}, sirine, true);
         ispisSeparator(sirine);
 
         for (int i = 1; i < stavke.length; i++) {
             String[] red = {
                 extractTag(stavke[i], "naziv"),
+                extractTag(stavke[i], "id_artikl"),
                 extractTag(stavke[i], "cena"),
+                extractTag(stavke[i], "popust"),
                 extractTag(stavke[i], "kolicina")
             };
             ispisRed(red, sirine, false);
         }
 
         ispisSeparator(sirine);
-        String ukupno = extractTag(xml, "ukupna_cena");
-        System.out.printf("  %-30s  %s RSD%n", "UKUPNO:", ukupno);
+        Float ukupno = Float.parseFloat(extractTag(xml, "ukupna_cena"));
+        String ukupnoFormated = String.format("%.2f", ukupno);
+        System.out.printf("  %-60s  %s RSD%n", "UKUPNO:", ukupnoFormated);
         ispisSeparator(sirine);
+    }
+
+    // Print wishlist in a special format
+    static void ispisWishlist(String xml) {
+        if (xml.contains("prazan")) {
+            System.out.println("\nWishlist je prazan.");
+            return;
+        }
+        if (xml.contains("<greska>")) {
+            System.out.println("Greska: " + extractTag(xml, "greska"));
+            return;
+        }
+
+        System.out.println("\n=== WISHLIST ===");
+        String[] artikli = xml.split("<artikl>");
+        int[]    sirine  = {6, 30, 12, 30};
+
+        ispisSeparator(sirine);
+        ispisRed(new String[]{"ID", "NAZIV", "CENA (RSD)", "DATUM DODAVANJA"}, sirine, true);
+        ispisSeparator(sirine);
+
+        for (int i = 1; i < artikli.length; i++) {
+            String[] red = {
+                extractTag(artikli[i], "id_artikl"),
+                extractTag(artikli[i], "naziv"),
+                extractTag(artikli[i], "cena"),
+                extractTag(artikli[i], "datum_dodavanja")
+            };
+            ispisRed(red, sirine, false);
+        }
+
+        ispisSeparator(sirine);
+        System.out.println("Ukupno: " + (artikli.length - 1) + " artikala u wishlist-u");
     }
 
     // Print narudzbine
