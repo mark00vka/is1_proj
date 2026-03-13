@@ -73,7 +73,7 @@
     -->
 <target name="-post-dist">
     <copy todir="${dist.dir}/Podsistem1Client">
-        <fileset dir="/home/markovka/Downloads" 
+        <fileset dir="${basedir}/lib"
                  includes="mysql-connector-java-5.1.49.jar"/>
     </copy>
 </target>
